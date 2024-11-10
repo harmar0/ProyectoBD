@@ -4,7 +4,7 @@ import java.sql.*;
 public class ConexionBD {
     private static final String URL = "jdbc:mysql://localhost:3306/laboratorio";
     private static final String USER = "root";
-    private static final String PASSWORD = "Fmcv2003@";
+    private static final String PASSWORD = "D130620n.";
 
     // Establecer conexión con la base de datos
     public static Connection getConexion() {
@@ -17,16 +17,16 @@ public class ConexionBD {
     }
 
     // Método para autenticar usuario y contraseña
-    public static boolean autenticarUsuario(String usuario, String contrasena) {
+    public static boolean autenticarUsuario(String usuario, String contraseña) {
         // Consulta SQL para verificar el usuario y contraseña
-        String query = "SELECT * FROM usuarios WHERE usuario = ? AND contrasena = ?";
+        String query = "SELECT * FROM usuarios WHERE usuario = ? AND contraseña = ?";
 
         try (Connection conn = getConexion(); 
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             // Establecemos los parámetros de la consulta
             stmt.setString(1, usuario);
-            stmt.setString(2, contrasena);
+            stmt.setString(2, contraseña);
 
             // Ejecutar la consulta
             ResultSet rs = stmt.executeQuery();
