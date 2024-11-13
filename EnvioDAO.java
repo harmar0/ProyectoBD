@@ -114,26 +114,26 @@ public List<Envio> obtenerEnvios() {
     return envios;
 }
 
-    public List<String[]> obtenerCantidadEnviosPorCliente() {
-        List<String[]> cantidades = new ArrayList<>();
-        String sql = "{ CALL `Cantidad de Envios por Clientes`() }";
-    
-        try (CallableStatement stmt = conexion.prepareCall(sql);
-             ResultSet rs = stmt.executeQuery()) {
-    
-            while (rs.next()) {
-                String[] cantidad = new String[2];
-                cantidad[0] = rs.getString("Cedula_cliente");
-                cantidad[1] = rs.getString("CantidadEnvios");
-                cantidades.add(cantidad);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+public List<Object[]> obtenerCantidadEnviosPorCliente() {
+    List<Object[]> cantidades = new ArrayList<>();
+    String sql = "{ CALL `Cantidad_de_Envios_por_Clientes`() }";
+
+    try (CallableStatement stmt = conexion.prepareCall(sql);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            Object[] cantidad = new Object[3];
+            cantidad[0] = rs.getString("Cedula_cliente");
+            cantidad[1] = rs.getString("Nombre1");
+            cantidad[2] = rs.getInt("cantidad_envios");
+            cantidades.add(cantidad);
         }
-    
-        return cantidades;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
 
+    return cantidades;
+}
 
     public List<Object[]> obtenerClientesYEnvios() {
         List<Object[]> clientesYEnvios = new ArrayList<>();

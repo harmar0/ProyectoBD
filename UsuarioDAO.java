@@ -92,6 +92,27 @@ public class UsuarioDAO {
     
         return clientes;
     }
+
+    public List<Object[]> obtenerClientesYEnvios() {
+        List<Object[]> clientesYEnvios = new ArrayList<>();
+        String sql = "{ CALL `Mostrar_Clientes_y_Envios`() }";
+
+        try (CallableStatement stmt = conexion.prepareCall(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String numeroEnvio = rs.getString("Numero_envio");
+                String cedulaCliente = rs.getString("Cedula_cliente");
+                String estadoActual = rs.getString("Estado_actual");
+
+                clientesYEnvios.add(new Object[] { numeroEnvio, cedulaCliente, estadoActual });
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return clientesYEnvios;
+    }
     // Es recomendable cerrar la conexión explícitamente si es que esta clase maneja la conexión directamente
     public void cerrarConexion() {
         try {

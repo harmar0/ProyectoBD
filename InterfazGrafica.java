@@ -586,8 +586,7 @@ class VentanaMostrar extends JFrame {
         btnMostrarEnvios.addActionListener(e -> mostrarEnvios());
         btnMostrarClientesYEnvios.addActionListener(e -> mostrarClientesYEnvios());
         btnMostrarCantidadEnvios.addActionListener(e -> mostrarCantidadEnviosPorCliente());
-        btnVolver.addActionListener(e -> dispose()); // Cerrar ventana
-
+        btnVolver.addActionListener(e -> dispose());
         setVisible(true);
     }
 
@@ -615,40 +614,24 @@ private void mostrarCantidadEnviosPorCliente() {
 // Métodos para actualizar el modelo de la tabla con diferentes datos
 private void actualizarTablaClientes(List<Cliente> clientes) {
     modeloTabla.setRowCount(0); // Limpiar la tabla
-    modeloTabla.setColumnIdentifiers(new String[] { "Cedula", "Nombre", "Apellido1", "Apellido2" });
+    modeloTabla.setColumnIdentifiers(new String[] { "Cedula", "Nombre1", "Nombre2", "Apellido1", "Apellido2" });
     for (Cliente cliente : clientes) {
-        modeloTabla.addRow(new Object[] { cliente.getCedula(), cliente.getNombre1(), cliente.getApellido2(),  cliente.getApellido1(), cliente.getApellido2() });
+        modeloTabla.addRow(new Object[] { cliente.getCedula(), cliente.getNombre1(), cliente.getNombre2(), cliente.getApellido2(),  cliente.getApellido1(), cliente.getApellido2() });
     }
 }
 
 private void actualizarTablaEnvios(List<Envio> envios) {
     modeloTabla.setRowCount(0); // Limpiar la tabla
-    modeloTabla.setColumnIdentifiers(new String[] { "ID Envio", "Fecha", "Costo", "Cliente" });
+    modeloTabla.setColumnIdentifiers(new String[] { "Numero_envio", "Cedula_cliente", "Canton_sucursal", "Fecha_envio", "Costo", "Estado_actual", "Cedula_destinatario", "Detalle" });
     for (Envio envio : envios) {
         modeloTabla.addRow(new Object[] { envio.getnumeroEnvio(), envio.getcedulaCliente(), envio.getcantonSucursal(),envio.getFechaEnvio(), envio.getCosto(), envio.getestadoActual(), envio.getcedulaDestinatario(), envio.getdetalle()  });
-    }
-}
-
-private void actualizarTablaClientesYEnvios(List<Object[]> clientesYEnvios) {
-    modeloTabla.setRowCount(0); // Limpiar la tabla
-    modeloTabla.setColumnIdentifiers(new String[] { "Numero Envio", "Cedula Cliente", "Estado" });
-    for (Object[] clienteEnvio : clientesYEnvios) {
-        modeloTabla.addRow(clienteEnvio);
-    }
-}
-
-private void actualizarTablaCantidadEnvios(List<Object[]> cantidadEnvios) {
-    modeloTabla.setRowCount(0); // Limpiar la tabla
-    modeloTabla.setColumnIdentifiers(new String[] { "Cedula Cliente", "Cantidad Envios" });
-    for (Object[] cantidad : cantidadEnvios) {
-        modeloTabla.addRow(cantidad);
     }
 }
 
 
     private void actualizarTablaClientesYEnvios(List<Object[]> clientesYEnvios) {
         modeloTabla.setRowCount(0); // Limpiar la tabla
-        modeloTabla.setColumnIdentifiers(new String[] { "Cedula", "Nombre", "ID Envio", "Fecha", "Costo" });
+        modeloTabla.setColumnIdentifiers(new String[] { "Numero_envio", "Cedula_cliente", "Estado_actual" });
         for (Object[] registro : clientesYEnvios) {
             modeloTabla.addRow(registro);
         }
@@ -656,7 +639,7 @@ private void actualizarTablaCantidadEnvios(List<Object[]> cantidadEnvios) {
 
     private void actualizarTablaCantidadEnvios(List<Object[]> cantidadEnvios) {
         modeloTabla.setRowCount(0); // Limpiar la tabla
-        modeloTabla.setColumnIdentifiers(new String[] { "Cedula", "Nombre", "Cantidad Envios" });
+        modeloTabla.setColumnIdentifiers(new String[] { "Cedula_cliente", "Nombre1", "cantidad_envios" });
         for (Object[] registro : cantidadEnvios) {
             modeloTabla.addRow(registro);
         }
