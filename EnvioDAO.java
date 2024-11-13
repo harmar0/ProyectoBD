@@ -32,7 +32,7 @@ public class EnvioDAO {
     public boolean actualizarEnvio(String Numero_envio, String Cedula_cliente, String Canton_sucursal, 
                                    String Fecha_envio, double Costo, String Estado_actual, 
                                    String Cedula_destinatario, String Detalle) {
-        String sql = "{ CALL `Actualizar Envio`(?, ?, ?, ?, ?, ?, ?, ?) }";
+        String sql = "{ CALL `Actualizarenvio`(?, ?, ?, ?, ?, ?, ?, ?) }";
         try (CallableStatement stmt = conexion.prepareCall(sql)) {
             stmt.setString(1, Numero_envio);
             stmt.setString(2, Cedula_cliente);
@@ -49,6 +49,32 @@ public class EnvioDAO {
         }
     }
 
+    public boolean eliminarEnvio(int numeroEnvio) {
+        String sql = "{ CALL `EliminarEnvio`(?) }";
+        try (CallableStatement stmt = conexion.prepareCall(sql)) {
+            stmt.setInt(1, numeroEnvio);
+            int rowsDeleted = stmt.executeUpdate();
+            return rowsDeleted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public List<Integer> obtenerNumerosEnvios() {
+        List<Integer> envios = new ArrayList<>();
+        String sql = "{CALL `Selectnumeroenvio`()}";
+        try (CallableStatement stmt = conexion.prepareCall(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                envios.add(rs.getInt("Numero_envio"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return envios;
+    }
+
     public boolean eliminarEnvio(String Numero_envio) {
         String sql = "{ CALL `EliminarEnvio`(?) }";
         try (CallableStatement stmt = conexion.prepareCall(sql)) {
@@ -60,36 +86,41 @@ public class EnvioDAO {
         }
     }
 
-    public List<String[]> mostrarEnvios() {
-        List<String[]> envios = new ArrayList<>();
-        String sql = "{ CALL `MostrarEnvios`() }";
-        try (CallableStatement stmt = conexion.prepareCall(sql);
-             ResultSet rs = stmt.executeQuery()) {
+    
+public List<Envio> obtenerEnvios() {
+    List<Envio> envios = new ArrayList<>();
+    String sql = "{ CALL MostrarEnvios() }";
 
-            while (rs.next()) {
-                String[] envio = new String[8];
-                envio[0] = rs.getString("Numero_envio");
-                envio[1] = rs.getString("Cedula_cliente");
-                envio[2] = rs.getString("Canton_sucursal");
-                envio[3] = rs.getString("Fecha_envio");
-                envio[4] = rs.getString("Costo");
-                envio[5] = rs.getString("Estado_actual");
-                envio[6] = rs.getString("Cedula_destinatario");
-                envio[7] = rs.getString("Detalle");
-                envios.add(envio);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    try (CallableStatement stmt = conexion.prepareCall(sql);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            String numeroEnvio = rs.getString("Numero_envio");
+            String cedulaCliente = rs.getString("Cedula_cliente");
+            String cantonSucursal = rs.getString("Canton_sucursal");
+            String fechaEnvio = rs.getString("Fecha_envio");
+            double costo = rs.getDouble("Costo");
+            String estadoActual = rs.getString("Estado_actual");
+            String cedulaDestinatario = rs.getString("Cedula_destinatario");
+            String detalle = rs.getString("Detalle");
+
+            Envio envio = new Envio(numeroEnvio, cedulaCliente, cantonSucursal, fechaEnvio, costo, estadoActual, cedulaDestinatario, detalle);
+            envios.add(envio);
         }
-        return envios;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
 
-    public List<String[]> cantidadEnviosPorClientes() {
+    return envios;
+}
+
+    public List<String[]> obtenerCantidadEnviosPorCliente() {
         List<String[]> cantidades = new ArrayList<>();
         String sql = "{ CALL `Cantidad de Envios por Clientes`() }";
+    
         try (CallableStatement stmt = conexion.prepareCall(sql);
              ResultSet rs = stmt.executeQuery()) {
-
+    
             while (rs.next()) {
                 String[] cantidad = new String[2];
                 cantidad[0] = rs.getString("Cedula_cliente");
@@ -99,28 +130,31 @@ public class EnvioDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    
         return cantidades;
     }
 
-    public List<String[]> mostrarClientesYEnvios() {
-        List<String[]> clientesYEnvios = new ArrayList<>();
-        String sql = "{ CALL `Mostrar Clientes y Envios`() }";
+
+    public List<Object[]> obtenerClientesYEnvios() {
+        List<Object[]> clientesYEnvios = new ArrayList<>();
+        String sql = "{ CALL `Mostrar_Clientes_y_Envios`() }";
+
         try (CallableStatement stmt = conexion.prepareCall(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                String[] clienteEnvio = new String[3];
-                clienteEnvio[0] = rs.getString("Cedula_cliente");
-                clienteEnvio[2] = rs.getString("Numero_envio");
-                clienteEnvio[6] = rs.getString("Estado_actual");
-                clientesYEnvios.add(clienteEnvio);
+                String numeroEnvio = rs.getString("Numero_envio");
+                String cedulaCliente = rs.getString("Cedula_cliente");
+                String estadoActual = rs.getString("Estado_actual");
+
+                clientesYEnvios.add(new Object[] { numeroEnvio, cedulaCliente, estadoActual });
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return clientesYEnvios;
     }
-
     public void cerrarConexion() {
         try {
             if (conexion != null && !conexion.isClosed()) {

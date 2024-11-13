@@ -10,7 +10,7 @@ public class UsuarioDAO {
     }
 
     public boolean insertarUsuario(String Cedula, String Nombre1, String Nombre2, String Apellido1, String Apellido2) {
-        String sql = "{ CALL Insertar Clientes(?, ?, ?, ?, ?) }";
+        String sql = "{ CALL Insertarcliente(?, ?, ?, ?, ?) }";
         try (CallableStatement stmt = conexion.prepareCall(sql)) {
             stmt.setString(1, Cedula);
             stmt.setString(2, Nombre1);
@@ -27,7 +27,7 @@ public class UsuarioDAO {
     }
 
     public boolean actualizarUsuario(String Cedula, String Nombre1, String Nombre2, String Apellido1, String Apellido2) {
-        String sql = "{ CALL Actualizar Clientes(?, ?, ?, ?, ?) }";
+        String sql = "{ CALL Actualizarclientes(?, ?, ?, ?, ?) }";
         try (CallableStatement stmt = conexion.prepareCall(sql)) {
             stmt.setString(1, Cedula);
             stmt.setString(2, Nombre1);
@@ -43,41 +43,55 @@ public class UsuarioDAO {
         }
     }
 
-    public boolean eliminarUsuario(String Cedula) {
+    public boolean eliminarCliente(String cedula) {
         String sql = "{ CALL EliminarCliente(?) }";
         try (CallableStatement stmt = conexion.prepareCall(sql)) {
-            stmt.setString(1, Cedula);
-            boolean result = stmt.executeUpdate() > 0;
-            // Cerrar conexión si es necesario
-            return result;
+            stmt.setString(1, cedula);
+            int rowsDeleted = stmt.executeUpdate();
+            return rowsDeleted > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-
-    public List<String[]> obtenerUsuarios() {
-        List<String[]> usuarios = new ArrayList<>();
-        String sql = "{ CALL MostrarClientes() }";
+    
+    public List<String> obtenerCedulasClientes() {
+        List<String> cedulas = new ArrayList<>();
+        String sql = "{ CALL Selectclientecedula() }";
         try (CallableStatement stmt = conexion.prepareCall(sql);
              ResultSet rs = stmt.executeQuery()) {
-
             while (rs.next()) {
-                String[] usuario = new String[5];
-                usuario[0] = rs.getString("Cedula");
-                usuario[1] = rs.getString("Nombre1");
-                usuario[2] = rs.getString("Nombre2");
-                usuario[3] = rs.getString("Apellido1");
-                usuario[4] = rs.getString("Apellido2");
-                usuarios.add(usuario);
+                cedulas.add(rs.getString("Cedula_cliente"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } 
-        // Cerrar conexión si es necesario
-        return usuarios;
+        }
+        return cedulas;
     }
 
+    public List<Cliente> obtenerClientes() {
+        List<Cliente> clientes = new ArrayList<>();
+        String sql = "{ CALL MostrarClientes() }";
+    
+        try (CallableStatement stmt = conexion.prepareCall(sql);
+             ResultSet rs = stmt.executeQuery()) {
+    
+            while (rs.next()) {
+                String cedula = rs.getString("Cedula_cliente");
+                String nombre1 = rs.getString("Nombre1");
+                String nombre2 = rs.getString("Nombre2");
+                String apellido1 = rs.getString("Apellido1");
+                String apellido2 = rs.getString("Apellido2");
+    
+                Cliente cliente = new Cliente(cedula, nombre1, nombre2, apellido1, apellido2);
+                clientes.add(cliente);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return clientes;
+    }
     // Es recomendable cerrar la conexión explícitamente si es que esta clase maneja la conexión directamente
     public void cerrarConexion() {
         try {

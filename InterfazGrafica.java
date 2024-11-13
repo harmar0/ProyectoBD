@@ -66,27 +66,40 @@ public class InterfazGrafica extends JFrame {
         btnInsertar.addActionListener(e -> new VentanaInsertarOpciones(usuarioDAO, envioDao, this));
 
         // Acción para abrir la ventana de actualizar usuario
-        btnActualizar.addActionListener(e -> {
-            this.setVisible(false);
-            new VentanaActualizar(usuarioDAO, this);
-        });
+        btnActualizar.addActionListener(e -> new VentanaActualizar());
 
         // Acción para eliminar usuario
         btnEliminar.addActionListener(e -> {
-            String cedula = JOptionPane.showInputDialog("Ingrese la cédula del usuario a eliminar:");
-            if (cedula != null && !cedula.trim().isEmpty()) {
-                if (usuarioDAO.eliminarUsuario(cedula)) {
-                    JOptionPane.showMessageDialog(null, "Usuario eliminado exitosamente.");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error al eliminar usuario.");
-                }
-            }
+            JFrame ventanaEliminar = new JFrame("Eliminar");
+            ventanaEliminar.setSize(250, 150);
+            ventanaEliminar.setLayout(new FlowLayout());
+            ventanaEliminar.setLocationRelativeTo(null);
+        
+            JButton btnEliminarCliente = new JButton("Eliminar Cliente");
+            btnEliminarCliente.addActionListener(e1 -> {
+                new VentanaEliminarCliente().setVisible(true);
+                ventanaEliminar.dispose();
+            });
+        
+            JButton btnEliminarEnvio = new JButton("Eliminar Envío");
+            btnEliminarEnvio.addActionListener(e2 -> {
+                new VentanaEliminarEnvio().setVisible(true);
+                ventanaEliminar.dispose();
+            });
+        
+            JButton btnVolver = new JButton("Volver");
+            btnVolver.addActionListener(e3 -> ventanaEliminar.dispose());
+        
+            ventanaEliminar.add(btnEliminarCliente);
+            ventanaEliminar.add(btnEliminarEnvio);
+            ventanaEliminar.add(btnVolver);
+        
+            ventanaEliminar.setVisible(true);
         });
-
         // Acción para abrir la ventana de mostrar usuarios
         btnMostrar.addActionListener(e -> {
             this.setVisible(false);
-            new VentanaMostrar(usuarioDAO, this);
+            new VentanaMostrar();
         });
     }
 
@@ -243,16 +256,50 @@ class VentanaInsertarEnvio extends JFrame {
 }
 // Ventana para Actualizar Usuario
 class VentanaActualizar extends JFrame {
-    private JTextField txtCedula, txtNombre1, txtNombre2, txtApellido1, txtApellido2;
-    private UsuarioDAO usuarioDAO;
 
-    public VentanaActualizar(UsuarioDAO usuarioDAO, JFrame parent) {
-        this.usuarioDAO = usuarioDAO;
-        setTitle("Actualizar Usuario");
+    public VentanaActualizar() {
+        setTitle("Actualizar Datos");
+        setSize(400, 300);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        // Panel principal con opciones de actualización
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new GridLayout(3, 1, 10, 10));
+
+        JButton btnActualizarCliente = new JButton("Actualizar Cliente");
+        JButton btnActualizarEnvio = new JButton("Actualizar Envío");
+        JButton btnVolver = new JButton("Volver");
+
+        // Acción para abrir la ventana de actualización de cliente
+        btnActualizarCliente.addActionListener(e -> new VentanaActualizarCliente().setVisible(true));
+
+        // Acción para abrir la ventana de actualización de envío
+        btnActualizarEnvio.addActionListener(e -> new VentanaActualizarEnvio().setVisible(true));
+
+        // Acción para volver (cerrar la ventana actual)
+        btnVolver.addActionListener(e -> dispose());
+
+        mainPanel.add(btnActualizarCliente);
+        mainPanel.add(btnActualizarEnvio);
+        mainPanel.add(btnVolver);
+
+        add(mainPanel, BorderLayout.CENTER);
+        setVisible(true);
+    }
+}
+
+// Ventana de actualización de cliente por cédula
+class VentanaActualizarCliente extends JFrame {
+    private JTextField txtCedula, txtNombre1, txtNombre2, txtApellido1, txtApellido2;
+
+    public VentanaActualizarCliente() {
+        setTitle("Actualizar Cliente");
         setSize(300, 300);
         setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel(new GridLayout(7, 2));
+        JPanel panel = new JPanel(new GridLayout(6, 2));
         txtCedula = new JTextField(10);
         txtNombre1 = new JTextField(10);
         txtNombre2 = new JTextField(10);
@@ -261,74 +308,360 @@ class VentanaActualizar extends JFrame {
 
         panel.add(new JLabel("Cédula:"));
         panel.add(txtCedula);
-        panel.add(new JLabel("Nombre1:"));
+        panel.add(new JLabel("Primer nombre:"));
         panel.add(txtNombre1);
-        panel.add(new JLabel("Nombre2:"));
+        panel.add(new JLabel("Segundo nombre:"));
         panel.add(txtNombre2);
-        panel.add(new JLabel("Apellido1:"));
+        panel.add(new JLabel("Primer apellido:"));
         panel.add(txtApellido1);
-        panel.add(new JLabel("Apellido2:"));
+        panel.add(new JLabel("Segundo apellido:"));
         panel.add(txtApellido2);
 
-        JButton btnActualizar = new JButton("Actualizar");
+        JButton btnAceptar = new JButton("Aceptar");
         JButton btnVolver = new JButton("Volver");
 
-        btnActualizar.addActionListener(e -> {
-            if (usuarioDAO.actualizarUsuario(txtCedula.getText(), txtNombre1.getText(), txtNombre2.getText(),
-                    txtApellido1.getText(), txtApellido2.getText())) {
-                JOptionPane.showMessageDialog(this, "Usuario actualizado exitosamente.");
+        // Acción para actualizar el cliente en la base de datos
+        btnAceptar.addActionListener(e -> {
+            String cedula = txtCedula.getText();
+            String nombre1 = txtNombre1.getText();
+            String nombre2 = txtNombre2.getText();
+            String apellido1 = txtApellido1.getText();
+            String apellido2 = txtApellido2.getText();
+        
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean success = usuarioDAO.actualizarUsuario(cedula, nombre1, nombre2, apellido1, apellido2);
+        
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Cliente actualizado exitosamente.");
                 dispose();
-                parent.setVisible(true);
             } else {
-                JOptionPane.showMessageDialog(this, "Error al actualizar usuario.");
+                JOptionPane.showMessageDialog(this, "Error al actualizar el cliente.");
             }
         });
 
-        btnVolver.addActionListener(e -> {
-            dispose();
-            parent.setVisible(true);
-        });
+        btnVolver.addActionListener(e -> dispose());
+
+        JPanel southPanel = new JPanel();
+        southPanel.add(btnAceptar);
+        southPanel.add(btnVolver);
 
         add(panel, BorderLayout.CENTER);
-        JPanel southPanel = new JPanel();
-        southPanel.add(btnActualizar);
-        southPanel.add(btnVolver);
         add(southPanel, BorderLayout.SOUTH);
         setVisible(true);
     }
 }
 
-// Ventana para Mostrar Usuarios en una tabla
-class VentanaMostrar extends JFrame {
-    public VentanaMostrar(UsuarioDAO usuarioDAO, JFrame parent) {
-        setTitle("Lista de Usuarios");
-        setSize(500, 300);
+// Ventana de actualización de envío por número de envío
+class VentanaActualizarEnvio extends JFrame {
+    private JTextField txtNumeroEnvio, txtFechaEnvio, txtCosto;
+
+    public VentanaActualizarEnvio() {
+        setTitle("Actualizar Envío");
+        setSize(300, 250);
         setLocationRelativeTo(null);
 
-        List<String[]> usuarios = usuarioDAO.obtenerUsuarios();
-        String[] columnNames = { "Cédula", "Nombre1", "Nombre2", "Apellido1", "Apellido2" };
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        JPanel panel = new JPanel(new GridLayout(10, 2));
+        JTextField txtNumeroEnvio = new JTextField(10);
+        JTextField txtCedulaCliente = new JTextField(10);
+        JTextField txtCantonSucursal = new JTextField(10);
+        JTextField txtFechaEnvio = new JTextField(10);
+        JTextField txtCosto = new JTextField(10);
+        JTextField txtEstadoActual = new JTextField(10);
+        JTextField txtCedulaDestinatario = new JTextField(10);
+        JTextField txtDetalle = new JTextField(10);
 
-        for (String[] usuario : usuarios) {
-            tableModel.addRow(usuario);
-        }
+        panel.add(new JLabel("Número de Envio:"));
+        panel.add(txtNumeroEnvio);
+        panel.add(new JLabel("Cédula del cliente:"));
+        panel.add(txtCedulaCliente);
+        panel.add(new JLabel("Cantón de la sucursal:"));
+        panel.add(txtCantonSucursal);
+        panel.add(new JLabel("Fecha de Envio (AAAA-MM-DD):"));
+        panel.add(txtFechaEnvio);
+        panel.add(new JLabel("Costo:"));
+        panel.add(txtCosto);
+        panel.add(new JLabel("Estado actual del envío:"));
+        panel.add(txtEstadoActual);
+        panel.add(new JLabel("Cédula del destinatario:"));
+        panel.add(txtCedulaDestinatario);
+        panel.add(new JLabel("Detalle del envío:"));
+        panel.add(txtDetalle);
 
-        JTable table = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(table);
-
+        JButton btnAceptar = new JButton("Aceptar");
         JButton btnVolver = new JButton("Volver");
-        btnVolver.addActionListener(e -> {
-            dispose();
-            parent.setVisible(true);
+
+        // Acción para actualizar el envío en la base de datos
+        btnAceptar.addActionListener(e -> {
+            try {
+                String numeroEnvio = txtNumeroEnvio.getText();
+                String cedulaCliente = txtCedulaCliente.getText();
+                String cantonSucursal = txtCantonSucursal.getText();
+                String fechaEnvio = txtFechaEnvio.getText();
+                double costo = Double.parseDouble(txtCosto.getText());
+                String estadoActual = txtEstadoActual.getText();
+                String cedulaDestinatario = txtCedulaDestinatario.getText();
+                String detalle = txtDetalle.getText();
+
+                EnvioDAO envioDao = new EnvioDAO();
+                boolean success = envioDao.actualizarEnvio(numeroEnvio, cedulaCliente, cantonSucursal, fechaEnvio, costo, estadoActual, cedulaDestinatario, detalle);
+        
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "Envío actualizado exitosamente.");
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al actualizar el envío.");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Por favor, ingresa un número válido en los campos de Número de Envío y Costo.");
+            }
         });
+        
+        btnVolver.addActionListener(e -> dispose());
 
-        add(scrollPane, BorderLayout.CENTER);
-        add(btnVolver, BorderLayout.SOUTH);
+        JPanel southPanel = new JPanel();
+        southPanel.add(btnAceptar);
+        southPanel.add(btnVolver);
 
+        add(panel, BorderLayout.CENTER);
+        add(southPanel, BorderLayout.SOUTH);
         setVisible(true);
     }
 }
 
+// Ventana para Ventana Eliminar Cliente
+class VentanaEliminarCliente extends JFrame {
+    private JComboBox<String> comboCedulas;
+    private JButton btnEliminar, btnVolver;
+    private UsuarioDAO usuarioDAO;
+
+    public VentanaEliminarCliente() {
+        usuarioDAO = new UsuarioDAO();
+
+        setTitle("Eliminar Cliente");
+        setSize(400, 200);
+        setLayout(new FlowLayout());
+        setLocationRelativeTo(null);
+
+        // Combo box con lista de cédulas
+        comboCedulas = new JComboBox<>();
+        cargarCedulas();
+        add(new JLabel("Seleccione cédula a eliminar:"));
+        add(comboCedulas);
+
+        // Botón Eliminar
+        btnEliminar = new JButton("Eliminar");
+        btnEliminar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cedulaSeleccionada = (String) comboCedulas.getSelectedItem();
+                if (cedulaSeleccionada != null) {
+                    boolean success = usuarioDAO.eliminarCliente(cedulaSeleccionada);
+                    if (success) {
+                        JOptionPane.showMessageDialog(VentanaEliminarCliente.this, "Cliente eliminado exitosamente.");
+                        cargarCedulas(); // Recargar cédulas después de eliminar
+                    } else {
+                        JOptionPane.showMessageDialog(VentanaEliminarCliente.this, "Error al eliminar el cliente.");
+                    }
+                }
+            }
+        });
+        add(btnEliminar);
+
+        // Botón Volver
+        btnVolver = new JButton("Volver");
+        btnVolver.addActionListener(e -> dispose());
+        add(btnVolver);
+    }
+
+    // Método para cargar cédulas en el combo box
+    private void cargarCedulas() {
+        comboCedulas.removeAllItems();
+        List<String> cedulas = usuarioDAO.obtenerCedulasClientes();
+        for (String cedula : cedulas) {
+            comboCedulas.addItem(cedula);
+        }
+    }
+}
+
+// Ventana para Eliminar Envio
+class VentanaEliminarEnvio extends JFrame {
+    private JComboBox<Integer> comboEnvios;
+    private JButton btnEliminar, btnVolver;
+    private EnvioDAO envioDAO;
+
+    public VentanaEliminarEnvio() {
+        envioDAO = new EnvioDAO();
+
+        setTitle("Eliminar Envío");
+        setSize(300, 200);
+        setLayout(new FlowLayout());
+        setLocationRelativeTo(null);
+
+        // Combo box con lista de envíos
+        comboEnvios = new JComboBox<>();
+        cargarEnvios();
+        add(new JLabel("Seleccione envío a eliminar:"));
+        add(comboEnvios);
+
+        // Botón Eliminar
+        btnEliminar = new JButton("Eliminar");
+        btnEliminar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Integer envioSeleccionado = (Integer) comboEnvios.getSelectedItem();
+                if (envioSeleccionado != null) {
+                    boolean success = envioDAO.eliminarEnvio(envioSeleccionado);
+                    if (success) {
+                        JOptionPane.showMessageDialog(VentanaEliminarEnvio.this, "Envío eliminado exitosamente.");
+                        cargarEnvios(); // Recargar envíos después de eliminar
+                    } else {
+                        JOptionPane.showMessageDialog(VentanaEliminarEnvio.this, "Error al eliminar el envío.");
+                    }
+                }
+            }
+        });
+        add(btnEliminar);
+
+        // Botón Volver
+        btnVolver = new JButton("Volver");
+        btnVolver.addActionListener(e -> dispose());
+        add(btnVolver);
+    }
+
+    // Método para cargar números de envíos en el combo box
+    private void cargarEnvios() {
+        comboEnvios.removeAllItems();
+        List<Integer> envios = envioDAO.obtenerNumerosEnvios();
+        for (Integer envio : envios) {
+            comboEnvios.addItem(envio);
+        }
+    }
+}
+
+// Ventana para Mostrar Usuarios en una tabla
+class VentanaMostrar extends JFrame {
+    private UsuarioDAO usuarioDAO;
+    private EnvioDAO envioDAO;
+    private JTable tablaDatos;
+    private DefaultTableModel modeloTabla;
+    private JButton btnMostrarClientes, btnMostrarEnvios, btnMostrarClientesYEnvios, btnMostrarCantidadEnvios, btnVolver;
+
+    public VentanaMostrar() {
+        usuarioDAO = new UsuarioDAO();
+        envioDAO = new EnvioDAO();
+
+        // Configuración de la ventana
+        setTitle("Mostrar Información");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        // Panel de botones
+        JPanel panelBotones = new JPanel();
+        panelBotones.setLayout(new GridLayout(5, 1, 10, 10));
+
+        btnMostrarClientes = new JButton("Mostrar Clientes");
+        btnMostrarEnvios = new JButton("Mostrar Envios");
+        btnMostrarClientesYEnvios = new JButton("Mostrar Clientes y Envios");
+        btnMostrarCantidadEnvios = new JButton("Mostrar Cantidad de Envios por Cliente");
+        btnVolver = new JButton("Volver");
+
+        panelBotones.add(btnMostrarClientes);
+        panelBotones.add(btnMostrarEnvios);
+        panelBotones.add(btnMostrarClientesYEnvios);
+        panelBotones.add(btnMostrarCantidadEnvios);
+        panelBotones.add(btnVolver);
+
+        // Tabla de datos
+        modeloTabla = new DefaultTableModel();
+        tablaDatos = new JTable(modeloTabla);
+        JScrollPane scrollPane = new JScrollPane(tablaDatos);
+
+        add(panelBotones, BorderLayout.WEST);
+        add(scrollPane, BorderLayout.CENTER);
+
+        // Acción para cada botón
+        btnMostrarClientes.addActionListener(e -> mostrarClientes());
+        btnMostrarEnvios.addActionListener(e -> mostrarEnvios());
+        btnMostrarClientesYEnvios.addActionListener(e -> mostrarClientesYEnvios());
+        btnMostrarCantidadEnvios.addActionListener(e -> mostrarCantidadEnviosPorCliente());
+        btnVolver.addActionListener(e -> dispose()); // Cerrar ventana
+
+        setVisible(true);
+    }
+
+// Llamadas a métodos de obtención y actualización de tablas
+private void mostrarClientes() {
+    List<Cliente> clientes = usuarioDAO.obtenerClientes();
+    actualizarTablaClientes(clientes);
+}
+
+private void mostrarEnvios() {
+    List<Envio> envios = envioDAO.obtenerEnvios();
+    actualizarTablaEnvios(envios);
+}
+
+private void mostrarClientesYEnvios() {
+    List<Object[]> clientesYEnvios = usuarioDAO.obtenerClientesYEnvios();
+    actualizarTablaClientesYEnvios(clientesYEnvios);
+}
+
+private void mostrarCantidadEnviosPorCliente() {
+    List<Object[]> cantidadEnvios = envioDAO.obtenerCantidadEnviosPorCliente();
+    actualizarTablaCantidadEnvios(cantidadEnvios);
+}
+
+// Métodos para actualizar el modelo de la tabla con diferentes datos
+private void actualizarTablaClientes(List<Cliente> clientes) {
+    modeloTabla.setRowCount(0); // Limpiar la tabla
+    modeloTabla.setColumnIdentifiers(new String[] { "Cedula", "Nombre", "Apellido1", "Apellido2" });
+    for (Cliente cliente : clientes) {
+        modeloTabla.addRow(new Object[] { cliente.getCedula(), cliente.getNombre1(), cliente.getApellido2(),  cliente.getApellido1(), cliente.getApellido2() });
+    }
+}
+
+private void actualizarTablaEnvios(List<Envio> envios) {
+    modeloTabla.setRowCount(0); // Limpiar la tabla
+    modeloTabla.setColumnIdentifiers(new String[] { "ID Envio", "Fecha", "Costo", "Cliente" });
+    for (Envio envio : envios) {
+        modeloTabla.addRow(new Object[] { envio.getnumeroEnvio(), envio.getcedulaCliente(), envio.getcantonSucursal(),envio.getFechaEnvio(), envio.getCosto(), envio.getestadoActual(), envio.getcedulaDestinatario(), envio.getdetalle()  });
+    }
+}
+
+private void actualizarTablaClientesYEnvios(List<Object[]> clientesYEnvios) {
+    modeloTabla.setRowCount(0); // Limpiar la tabla
+    modeloTabla.setColumnIdentifiers(new String[] { "Numero Envio", "Cedula Cliente", "Estado" });
+    for (Object[] clienteEnvio : clientesYEnvios) {
+        modeloTabla.addRow(clienteEnvio);
+    }
+}
+
+private void actualizarTablaCantidadEnvios(List<Object[]> cantidadEnvios) {
+    modeloTabla.setRowCount(0); // Limpiar la tabla
+    modeloTabla.setColumnIdentifiers(new String[] { "Cedula Cliente", "Cantidad Envios" });
+    for (Object[] cantidad : cantidadEnvios) {
+        modeloTabla.addRow(cantidad);
+    }
+}
+
+
+    private void actualizarTablaClientesYEnvios(List<Object[]> clientesYEnvios) {
+        modeloTabla.setRowCount(0); // Limpiar la tabla
+        modeloTabla.setColumnIdentifiers(new String[] { "Cedula", "Nombre", "ID Envio", "Fecha", "Costo" });
+        for (Object[] registro : clientesYEnvios) {
+            modeloTabla.addRow(registro);
+        }
+    }
+
+    private void actualizarTablaCantidadEnvios(List<Object[]> cantidadEnvios) {
+        modeloTabla.setRowCount(0); // Limpiar la tabla
+        modeloTabla.setColumnIdentifiers(new String[] { "Cedula", "Nombre", "Cantidad Envios" });
+        for (Object[] registro : cantidadEnvios) {
+            modeloTabla.addRow(registro);
+        }
+    }
+}
 // Ventana de Login
 class VentanaLogin extends JFrame {
     public VentanaLogin() {
