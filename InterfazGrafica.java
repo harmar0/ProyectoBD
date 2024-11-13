@@ -71,7 +71,7 @@ public class InterfazGrafica extends JFrame {
         // Acción para eliminar usuario
         btnEliminar.addActionListener(e -> {
             JFrame ventanaEliminar = new JFrame("Eliminar");
-            ventanaEliminar.setSize(250, 150);
+            ventanaEliminar.setSize(200, 150);
             ventanaEliminar.setLayout(new FlowLayout());
             ventanaEliminar.setLocationRelativeTo(null);
         
@@ -98,9 +98,10 @@ public class InterfazGrafica extends JFrame {
         });
         // Acción para abrir la ventana de mostrar usuarios
         btnMostrar.addActionListener(e -> {
-            this.setVisible(false);
-            new VentanaMostrar();
+            this.setVisible(false); // Oculta la ventana principal
+            new VentanaMostrar(this); // Pasa la referencia de la ventana principal
         });
+        
     }
 
     public static void main(String[] args) {
@@ -108,17 +109,40 @@ public class InterfazGrafica extends JFrame {
     }
 }
 
-// Ventana para Insertar Usuario
 class VentanaInsertarOpciones extends JFrame {
     public VentanaInsertarOpciones(UsuarioDAO usuarioDAO, EnvioDAO envioDao, JFrame parent) {
         setTitle("Insertar");
-        setSize(300, 200);
+        setSize(400, 200);
         setLocationRelativeTo(parent);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        // Crear panel principal con un margen para espaciar los botones
+        JPanel panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(new GridBagLayout()); // Usar GridBagLayout para flexibilidad
+        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Márgenes
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5); // Espaciado entre botones
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        
+        // Botones con un tamaño preferido menor
         JButton btnInsertarCliente = new JButton("Insertar Cliente");
+        btnInsertarCliente.setPreferredSize(new Dimension(150, 30));
         JButton btnInsertarEnvio = new JButton("Insertar Envio");
+        btnInsertarEnvio.setPreferredSize(new Dimension(150, 30));
         JButton btnVolver = new JButton("Volver");
+        btnVolver.setPreferredSize(new Dimension(150, 30));
 
+        // Agregar botones al panel
+        panelPrincipal.add(btnInsertarCliente, gbc);
+        gbc.gridy++;
+        panelPrincipal.add(btnInsertarEnvio, gbc);
+        gbc.gridy++;
+        panelPrincipal.add(btnVolver, gbc);
+
+        // Agregar acción a los botones
         btnInsertarCliente.addActionListener(e -> new VentanaInsertarCliente(usuarioDAO, this));
         btnInsertarEnvio.addActionListener(e -> new VentanaInsertarEnvio(envioDao, this));
         btnVolver.addActionListener(e -> {
@@ -126,11 +150,8 @@ class VentanaInsertarOpciones extends JFrame {
             parent.setVisible(true);
         });
 
-        setLayout(new GridLayout(5, 3));
-        add(btnInsertarCliente);
-        add(btnInsertarEnvio);
-        add(btnVolver);
-
+        // Agregar panel al JFrame
+        add(panelPrincipal);
         setVisible(true);
     }
 }
@@ -254,7 +275,6 @@ class VentanaInsertarEnvio extends JFrame {
         setVisible(true);
     }
 }
-// Ventana para Actualizar Usuario
 class VentanaActualizar extends JFrame {
 
     public VentanaActualizar() {
@@ -266,11 +286,24 @@ class VentanaActualizar extends JFrame {
 
         // Panel principal con opciones de actualización
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(3, 1, 10, 10));
+        mainPanel.setLayout(new GridLayout(3, 1, 20, 20)); // Espacio más grande entre los botones
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Márgenes adicionales
 
+        // Crear los botones
         JButton btnActualizarCliente = new JButton("Actualizar Cliente");
         JButton btnActualizarEnvio = new JButton("Actualizar Envío");
         JButton btnVolver = new JButton("Volver");
+
+        // Ajustar tamaño de los botones (más pequeños con respecto al panel)
+        btnActualizarCliente.setPreferredSize(new Dimension(5, 5)); // Tamaño más pequeño
+        btnActualizarEnvio.setPreferredSize(new Dimension(5, 5)); // Tamaño más pequeño
+        btnVolver.setPreferredSize(new Dimension(0, 5)); // Tamaño más pequeño
+
+        // Opcional: Ajustar tamaño de la fuente para los botones
+        Font font = new Font("Arial", Font.PLAIN, 12); // Tamaño de fuente reducido
+        btnActualizarCliente.setFont(font);
+        btnActualizarEnvio.setFont(font);
+        btnVolver.setFont(font);
 
         // Acción para abrir la ventana de actualización de cliente
         btnActualizarCliente.addActionListener(e -> new VentanaActualizarCliente().setVisible(true));
@@ -281,14 +314,17 @@ class VentanaActualizar extends JFrame {
         // Acción para volver (cerrar la ventana actual)
         btnVolver.addActionListener(e -> dispose());
 
+        // Agregar los botones al panel principal
         mainPanel.add(btnActualizarCliente);
         mainPanel.add(btnActualizarEnvio);
         mainPanel.add(btnVolver);
 
+        // Agregar el panel al JFrame
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
     }
 }
+
 
 // Ventana de actualización de cliente por cédula
 class VentanaActualizarCliente extends JFrame {
@@ -438,7 +474,7 @@ class VentanaEliminarCliente extends JFrame {
         usuarioDAO = new UsuarioDAO();
 
         setTitle("Eliminar Cliente");
-        setSize(400, 200);
+        setSize(600, 400);
         setLayout(new FlowLayout());
         setLocationRelativeTo(null);
 
@@ -538,57 +574,75 @@ class VentanaEliminarEnvio extends JFrame {
     }
 }
 
-// Ventana para Mostrar Usuarios en una tabla
+
 class VentanaMostrar extends JFrame {
     private UsuarioDAO usuarioDAO;
     private EnvioDAO envioDAO;
     private JTable tablaDatos;
     private DefaultTableModel modeloTabla;
     private JButton btnMostrarClientes, btnMostrarEnvios, btnMostrarClientesYEnvios, btnMostrarCantidadEnvios, btnVolver;
+    private InterfazGrafica interfazPrincipal; // Agregar referencia a InterfazGrafica
 
-    public VentanaMostrar() {
+    public VentanaMostrar(InterfazGrafica interfazPrincipal) {
+        this.interfazPrincipal = interfazPrincipal; // Guardar la referencia
         usuarioDAO = new UsuarioDAO();
         envioDAO = new EnvioDAO();
-
+    
         // Configuración de la ventana
         setTitle("Mostrar Información");
-        setSize(600, 400);
+        setSize(1200, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-
-        // Panel de botones
+    
+        // Panel para botones con posiciones absolutas
         JPanel panelBotones = new JPanel();
-        panelBotones.setLayout(new GridLayout(5, 1, 10, 10));
-
+        panelBotones.setLayout(null); // Usar un diseño nulo para posiciones absolutas
+        panelBotones.setPreferredSize(new Dimension(300, 400)); // Tamaño fijo para el panel de botones
+    
+        // Crear y posicionar cada botón independientemente
         btnMostrarClientes = new JButton("Mostrar Clientes");
-        btnMostrarEnvios = new JButton("Mostrar Envios");
-        btnMostrarClientesYEnvios = new JButton("Mostrar Clientes y Envios");
-        btnMostrarCantidadEnvios = new JButton("Mostrar Cantidad de Envios por Cliente");
-        btnVolver = new JButton("Volver");
-
+        btnMostrarClientes.setBounds(20, 10, 200, 30); // Posición y tamaño (x, y, width, height)
         panelBotones.add(btnMostrarClientes);
+    
+        btnMostrarEnvios = new JButton("Mostrar Envios");
+        btnMostrarEnvios.setBounds(20, 70, 200, 30);
         panelBotones.add(btnMostrarEnvios);
+    
+        btnMostrarClientesYEnvios = new JButton("Mostrar Clientes y Envios");
+        btnMostrarClientesYEnvios.setBounds(20, 130, 200, 30);
         panelBotones.add(btnMostrarClientesYEnvios);
+    
+        btnMostrarCantidadEnvios = new JButton("Mostrar Cantidad de Envios por Cliente");
+        btnMostrarCantidadEnvios.setBounds(20, 190, 200, 30);
         panelBotones.add(btnMostrarCantidadEnvios);
+    
+        btnVolver = new JButton("Volver");
+        btnVolver.setBounds(20, 250, 200, 30);
         panelBotones.add(btnVolver);
-
+    
         // Tabla de datos
         modeloTabla = new DefaultTableModel();
         tablaDatos = new JTable(modeloTabla);
         JScrollPane scrollPane = new JScrollPane(tablaDatos);
-
-        add(panelBotones, BorderLayout.WEST);
+    
+        add(panelBotones, BorderLayout.WEST); // Coloca el panel de botones en el lado izquierdo
         add(scrollPane, BorderLayout.CENTER);
-
+    
         // Acción para cada botón
         btnMostrarClientes.addActionListener(e -> mostrarClientes());
         btnMostrarEnvios.addActionListener(e -> mostrarEnvios());
         btnMostrarClientesYEnvios.addActionListener(e -> mostrarClientesYEnvios());
         btnMostrarCantidadEnvios.addActionListener(e -> mostrarCantidadEnviosPorCliente());
-        btnVolver.addActionListener(e -> dispose());
+        btnVolver.addActionListener(e -> {
+            dispose(); // Cierra la ventana actual
+            interfazPrincipal.setVisible(true); // Muestra la ventana principal
+        });
+    
         setVisible(true);
     }
+    
+    
 
 // Llamadas a métodos de obtención y actualización de tablas
 private void mostrarClientes() {
