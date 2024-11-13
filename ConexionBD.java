@@ -3,7 +3,7 @@ import java.sql.*;
 public class ConexionBD {
     private static final String URL = "jdbc:mysql://localhost:3306/correos";
     private static final String USER = "root";
-    private static final String PASSWORD = "D130620n.";
+    private static final String PASSWORD = "Fmcv2003@";
 
     // Establecer conexión con la base de datos
     public static Connection getConexion() {
