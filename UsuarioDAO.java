@@ -10,7 +10,7 @@ public class UsuarioDAO {
     }
 
     public boolean insertarUsuario(String Cedula, String Nombre1, String Nombre2, String Apellido1, String Apellido2) {
-        String sql = "{ CALL clientes(?, ?, ?, ?, ?) }";
+        String sql = "{ CALL Insertar Clientes(?, ?, ?, ?, ?) }";
         try (CallableStatement stmt = conexion.prepareCall(sql)) {
             stmt.setString(1, Cedula);
             stmt.setString(2, Nombre1);
@@ -27,7 +27,7 @@ public class UsuarioDAO {
     }
 
     public boolean actualizarUsuario(String Cedula, String Nombre1, String Nombre2, String Apellido1, String Apellido2) {
-        String sql = "{ CALL ActualizarCliente(?, ?, ?, ?, ?) }";
+        String sql = "{ CALL Actualizar Clientes(?, ?, ?, ?, ?) }";
         try (CallableStatement stmt = conexion.prepareCall(sql)) {
             stmt.setString(1, Cedula);
             stmt.setString(2, Nombre1);
@@ -58,7 +58,7 @@ public class UsuarioDAO {
 
     public List<String[]> obtenerUsuarios() {
         List<String[]> usuarios = new ArrayList<>();
-        String sql = "{ CALL SeleccionarClientes() }";
+        String sql = "{ CALL MostrarClientes() }";
         try (CallableStatement stmt = conexion.prepareCall(sql);
              ResultSet rs = stmt.executeQuery()) {
 
