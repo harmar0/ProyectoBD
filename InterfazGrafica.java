@@ -68,34 +68,38 @@ public class InterfazGrafica extends JFrame {
         // Acción para abrir la ventana de actualizar usuario
         btnActualizar.addActionListener(e -> new VentanaActualizar());
 
-        // Acción para eliminar usuario
-        btnEliminar.addActionListener(e -> {
-            JFrame ventanaEliminar = new JFrame("Eliminar");
-            ventanaEliminar.setSize(200, 150);
-            ventanaEliminar.setLayout(new FlowLayout());
-            ventanaEliminar.setLocationRelativeTo(null);
-        
-            JButton btnEliminarCliente = new JButton("Eliminar Cliente");
-            btnEliminarCliente.addActionListener(e1 -> {
-                new VentanaEliminarCliente().setVisible(true);
-                ventanaEliminar.dispose();
-            });
-        
-            JButton btnEliminarEnvio = new JButton("Eliminar Envío");
-            btnEliminarEnvio.addActionListener(e2 -> {
-                new VentanaEliminarEnvio().setVisible(true);
-                ventanaEliminar.dispose();
-            });
-        
-            JButton btnVolver = new JButton("Volver");
-            btnVolver.addActionListener(e3 -> ventanaEliminar.dispose());
-        
-            ventanaEliminar.add(btnEliminarCliente);
-            ventanaEliminar.add(btnEliminarEnvio);
-            ventanaEliminar.add(btnVolver);
-        
-            ventanaEliminar.setVisible(true);
+    btnEliminar.addActionListener(e -> {
+        JFrame ventanaEliminar = new JFrame("Eliminar");
+        ventanaEliminar.setSize(200, 150);
+        ventanaEliminar.setLocationRelativeTo(null);
+    
+        FondoPanel fondoPanel = new FondoPanel("C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg");
+        fondoPanel.setLayout(new FlowLayout());
+    
+        JButton btnEliminarCliente = new JButton("Eliminar Cliente");
+        btnEliminarCliente.addActionListener(e1 -> {
+            new VentanaEliminarCliente().setVisible(true);
+            ventanaEliminar.dispose();
         });
+    
+        JButton btnEliminarEnvio = new JButton("Eliminar Envío");
+        btnEliminarEnvio.addActionListener(e2 -> {
+            new VentanaEliminarEnvio().setVisible(true);
+            ventanaEliminar.dispose();
+        });
+    
+        JButton btnVolver = new JButton("Volver");
+        btnVolver.addActionListener(e3 -> ventanaEliminar.dispose());
+    
+        fondoPanel.add(btnEliminarCliente);
+        fondoPanel.add(btnEliminarEnvio);
+        fondoPanel.add(btnVolver);
+    
+        ventanaEliminar.setContentPane(fondoPanel);
+        ventanaEliminar.setVisible(true);
+    });
+    
+
         // Acción para abrir la ventana de mostrar usuarios
         btnMostrar.addActionListener(e -> {
             this.setVisible(false); // Oculta la ventana principal
@@ -116,17 +120,18 @@ class VentanaInsertarOpciones extends JFrame {
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Crear panel principal con un margen para espaciar los botones
-        JPanel panelPrincipal = new JPanel();
-        panelPrincipal.setLayout(new GridBagLayout()); // Usar GridBagLayout para flexibilidad
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Márgenes
+        // Crear panel de fondo
+        String imagePath = "C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg";
+        FondoPanel fondoPanel = new FondoPanel(imagePath);
+        fondoPanel.setLayout(new GridBagLayout()); // Usar GridBagLayout para flexibilidad
+        fondoPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Márgenes
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5); // Espaciado entre botones
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        
+
         // Botones con un tamaño preferido menor
         JButton btnInsertarCliente = new JButton("Insertar Cliente");
         btnInsertarCliente.setPreferredSize(new Dimension(150, 30));
@@ -135,12 +140,12 @@ class VentanaInsertarOpciones extends JFrame {
         JButton btnVolver = new JButton("Volver");
         btnVolver.setPreferredSize(new Dimension(150, 30));
 
-        // Agregar botones al panel
-        panelPrincipal.add(btnInsertarCliente, gbc);
+        // Agregar botones al panel de fondo
+        fondoPanel.add(btnInsertarCliente, gbc);
         gbc.gridy++;
-        panelPrincipal.add(btnInsertarEnvio, gbc);
+        fondoPanel.add(btnInsertarEnvio, gbc);
         gbc.gridy++;
-        panelPrincipal.add(btnVolver, gbc);
+        fondoPanel.add(btnVolver, gbc);
 
         // Agregar acción a los botones
         btnInsertarCliente.addActionListener(e -> new VentanaInsertarCliente(usuarioDAO, this));
@@ -150,11 +155,12 @@ class VentanaInsertarOpciones extends JFrame {
             parent.setVisible(true);
         });
 
-        // Agregar panel al JFrame
-        add(panelPrincipal);
+        // Establecer el panel de fondo como el ContentPane
+        setContentPane(fondoPanel);
         setVisible(true);
     }
 }
+
 
 // Ventana para insertar cliente
 class VentanaInsertarCliente extends JFrame {
@@ -163,7 +169,13 @@ class VentanaInsertarCliente extends JFrame {
         setSize(300, 200);
         setLocationRelativeTo(parent);
 
+        // Crear panel de fondo
+        String imagePath = "C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg";
+        FondoPanel fondoPanel = new FondoPanel(imagePath);
+        fondoPanel.setLayout(new BorderLayout());
+
         JPanel panel = new JPanel(new GridLayout(7, 2));
+        panel.setOpaque(false); // Hacer transparente para que el fondo sea visible
         JTextField txtCedula = new JTextField(10);
         JTextField txtNombre1 = new JTextField(10);
         JTextField txtNombre2 = new JTextField(10);
@@ -199,12 +211,14 @@ class VentanaInsertarCliente extends JFrame {
             parent.setVisible(true);
         });
 
-        add(panel, BorderLayout.CENTER);
+        fondoPanel.add(panel, BorderLayout.CENTER);
         JPanel southPanel = new JPanel();
+        southPanel.setOpaque(false);
         southPanel.add(btnAceptar);
         southPanel.add(btnVolver);
-        add(southPanel, BorderLayout.SOUTH);
+        fondoPanel.add(southPanel, BorderLayout.SOUTH);
 
+        setContentPane(fondoPanel);
         setVisible(true);
     }
 }
@@ -216,7 +230,13 @@ class VentanaInsertarEnvio extends JFrame {
         setSize(300, 300);
         setLocationRelativeTo(parent);
 
+        // Crear panel de fondo
+        String imagePath = "C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg";
+        FondoPanel fondoPanel = new FondoPanel(imagePath);
+        fondoPanel.setLayout(new BorderLayout());
+
         JPanel panel = new JPanel(new GridLayout(10, 2));
+        panel.setOpaque(false);
         JTextField txtNumeroEnvio = new JTextField();
         JTextField txtCedulaCliente = new JTextField();
         JTextField txtCantonSucursal = new JTextField();
@@ -266,23 +286,29 @@ class VentanaInsertarEnvio extends JFrame {
             parent.setVisible(true);
         });
 
-        add(panel, BorderLayout.CENTER);
+        fondoPanel.add(panel, BorderLayout.CENTER);
         JPanel southPanel = new JPanel();
+        southPanel.setOpaque(false);
         southPanel.add(btnAceptar);
         southPanel.add(btnVolver);
-        add(southPanel, BorderLayout.SOUTH);
+        fondoPanel.add(southPanel, BorderLayout.SOUTH);
 
+        setContentPane(fondoPanel);
         setVisible(true);
     }
 }
-class VentanaActualizar extends JFrame {
 
+class VentanaActualizar extends JFrame {
     public VentanaActualizar() {
         setTitle("Actualizar Datos");
         setSize(400, 300);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout());
+
+        // Crear el panel de fondo
+        String imagePath = "C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg";
+        FondoPanel fondoPanel = new FondoPanel(imagePath);
+        fondoPanel.setLayout(new BorderLayout());
 
         // Panel principal con opciones de actualización
         JPanel mainPanel = new JPanel();
@@ -294,53 +320,48 @@ class VentanaActualizar extends JFrame {
         JButton btnActualizarEnvio = new JButton("Actualizar Envío");
         JButton btnVolver = new JButton("Volver");
 
-        // Ajustar tamaño de los botones (más pequeños con respecto al panel)
-        btnActualizarCliente.setPreferredSize(new Dimension(5, 5)); // Tamaño más pequeño
-        btnActualizarEnvio.setPreferredSize(new Dimension(5, 5)); // Tamaño más pequeño
-        btnVolver.setPreferredSize(new Dimension(0, 5)); // Tamaño más pequeño
+        // Ajustar tamaño de los botones
+        btnActualizarCliente.setPreferredSize(new Dimension(150, 30));
+        btnActualizarEnvio.setPreferredSize(new Dimension(150, 30));
+        btnVolver.setPreferredSize(new Dimension(150, 30));
 
-        // Opcional: Ajustar tamaño de la fuente para los botones
-        Font font = new Font("Arial", Font.PLAIN, 12); // Tamaño de fuente reducido
-        btnActualizarCliente.setFont(font);
-        btnActualizarEnvio.setFont(font);
-        btnVolver.setFont(font);
-
-        // Acción para abrir la ventana de actualización de cliente
-        btnActualizarCliente.addActionListener(e -> new VentanaActualizarCliente().setVisible(true));
-
-        // Acción para abrir la ventana de actualización de envío
-        btnActualizarEnvio.addActionListener(e -> new VentanaActualizarEnvio().setVisible(true));
-
-        // Acción para volver (cerrar la ventana actual)
-        btnVolver.addActionListener(e -> dispose());
-
-        // Agregar los botones al panel principal
+        // Agregar los botones al panel
         mainPanel.add(btnActualizarCliente);
         mainPanel.add(btnActualizarEnvio);
         mainPanel.add(btnVolver);
 
-        // Agregar el panel al JFrame
-        add(mainPanel, BorderLayout.CENTER);
+        // Agregar acción a los botones
+        btnActualizarCliente.addActionListener(e -> new VentanaActualizarCliente().setVisible(true));
+        btnActualizarEnvio.addActionListener(e -> new VentanaActualizarEnvio().setVisible(true));
+        btnVolver.addActionListener(e -> dispose());
+
+        fondoPanel.add(mainPanel, BorderLayout.CENTER); // Agregar panel principal al fondo
+
+        // Establecer el panel de fondo como ContentPane
+        setContentPane(fondoPanel);
         setVisible(true);
     }
 }
 
 
-// Ventana de actualización de cliente por cédula
 class VentanaActualizarCliente extends JFrame {
-    private JTextField txtCedula, txtNombre1, txtNombre2, txtApellido1, txtApellido2;
-
     public VentanaActualizarCliente() {
         setTitle("Actualizar Cliente");
         setSize(300, 300);
         setLocationRelativeTo(null);
 
+        // Crear el panel de fondo
+        String imagePath = "C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg";
+        FondoPanel fondoPanel = new FondoPanel(imagePath);
+        fondoPanel.setLayout(new BorderLayout());
+
+        // Panel con campos de cliente
         JPanel panel = new JPanel(new GridLayout(6, 2));
-        txtCedula = new JTextField(10);
-        txtNombre1 = new JTextField(10);
-        txtNombre2 = new JTextField(10);
-        txtApellido1 = new JTextField(10);
-        txtApellido2 = new JTextField(10);
+        JTextField txtCedula = new JTextField(10);
+        JTextField txtNombre1 = new JTextField(10);
+        JTextField txtNombre2 = new JTextField(10);
+        JTextField txtApellido1 = new JTextField(10);
+        JTextField txtApellido2 = new JTextField(10);
 
         panel.add(new JLabel("Cédula:"));
         panel.add(txtCedula);
@@ -356,17 +377,16 @@ class VentanaActualizarCliente extends JFrame {
         JButton btnAceptar = new JButton("Aceptar");
         JButton btnVolver = new JButton("Volver");
 
-        // Acción para actualizar el cliente en la base de datos
         btnAceptar.addActionListener(e -> {
             String cedula = txtCedula.getText();
             String nombre1 = txtNombre1.getText();
             String nombre2 = txtNombre2.getText();
             String apellido1 = txtApellido1.getText();
             String apellido2 = txtApellido2.getText();
-        
+
             UsuarioDAO usuarioDAO = new UsuarioDAO();
             boolean success = usuarioDAO.actualizarUsuario(cedula, nombre1, nombre2, apellido1, apellido2);
-        
+
             if (success) {
                 JOptionPane.showMessageDialog(this, "Cliente actualizado exitosamente.");
                 dispose();
@@ -381,21 +401,26 @@ class VentanaActualizarCliente extends JFrame {
         southPanel.add(btnAceptar);
         southPanel.add(btnVolver);
 
-        add(panel, BorderLayout.CENTER);
-        add(southPanel, BorderLayout.SOUTH);
+        fondoPanel.add(panel, BorderLayout.CENTER);
+        fondoPanel.add(southPanel, BorderLayout.SOUTH);
+
+        setContentPane(fondoPanel);
         setVisible(true);
     }
 }
 
-// Ventana de actualización de envío por número de envío
 class VentanaActualizarEnvio extends JFrame {
-    private JTextField txtNumeroEnvio, txtFechaEnvio, txtCosto;
-
     public VentanaActualizarEnvio() {
         setTitle("Actualizar Envío");
         setSize(300, 250);
         setLocationRelativeTo(null);
 
+        // Crear el panel de fondo
+        String imagePath = "C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg";
+        FondoPanel fondoPanel = new FondoPanel(imagePath);
+        fondoPanel.setLayout(new BorderLayout());
+
+        // Panel con campos de envío
         JPanel panel = new JPanel(new GridLayout(10, 2));
         JTextField txtNumeroEnvio = new JTextField(10);
         JTextField txtCedulaCliente = new JTextField(10);
@@ -426,7 +451,6 @@ class VentanaActualizarEnvio extends JFrame {
         JButton btnAceptar = new JButton("Aceptar");
         JButton btnVolver = new JButton("Volver");
 
-        // Acción para actualizar el envío en la base de datos
         btnAceptar.addActionListener(e -> {
             try {
                 String numeroEnvio = txtNumeroEnvio.getText();
@@ -440,7 +464,7 @@ class VentanaActualizarEnvio extends JFrame {
 
                 EnvioDAO envioDao = new EnvioDAO();
                 boolean success = envioDao.actualizarEnvio(numeroEnvio, cedulaCliente, cantonSucursal, fechaEnvio, costo, estadoActual, cedulaDestinatario, detalle);
-        
+
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Envío actualizado exitosamente.");
                     dispose();
@@ -451,20 +475,22 @@ class VentanaActualizarEnvio extends JFrame {
                 JOptionPane.showMessageDialog(this, "Por favor, ingresa un número válido en los campos de Número de Envío y Costo.");
             }
         });
-        
+
         btnVolver.addActionListener(e -> dispose());
 
         JPanel southPanel = new JPanel();
         southPanel.add(btnAceptar);
         southPanel.add(btnVolver);
 
-        add(panel, BorderLayout.CENTER);
-        add(southPanel, BorderLayout.SOUTH);
+        fondoPanel.add(panel, BorderLayout.CENTER);
+        fondoPanel.add(southPanel, BorderLayout.SOUTH);
+
+        setContentPane(fondoPanel);
         setVisible(true);
     }
 }
 
-// Ventana para Ventana Eliminar Cliente
+
 class VentanaEliminarCliente extends JFrame {
     private JComboBox<String> comboCedulas;
     private JButton btnEliminar, btnVolver;
@@ -478,11 +504,16 @@ class VentanaEliminarCliente extends JFrame {
         setLayout(new FlowLayout());
         setLocationRelativeTo(null);
 
+        // Crear el panel de fondo
+        String imagePath = "C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg";
+        FondoPanel fondoPanel = new FondoPanel(imagePath);
+        fondoPanel.setLayout(new FlowLayout());  // Aseguramos que el contenido se acomode correctamente
+
         // Combo box con lista de cédulas
         comboCedulas = new JComboBox<>();
         cargarCedulas();
-        add(new JLabel("Seleccione cédula a eliminar:"));
-        add(comboCedulas);
+        fondoPanel.add(new JLabel("Seleccione cédula a eliminar:"));
+        fondoPanel.add(comboCedulas);
 
         // Botón Eliminar
         btnEliminar = new JButton("Eliminar");
@@ -501,12 +532,16 @@ class VentanaEliminarCliente extends JFrame {
                 }
             }
         });
-        add(btnEliminar);
+        fondoPanel.add(btnEliminar);
 
         // Botón Volver
         btnVolver = new JButton("Volver");
         btnVolver.addActionListener(e -> dispose());
-        add(btnVolver);
+        fondoPanel.add(btnVolver);
+
+        // Establecer el panel de fondo como ContentPane
+        setContentPane(fondoPanel);
+        setVisible(true);
     }
 
     // Método para cargar cédulas en el combo box
@@ -519,7 +554,6 @@ class VentanaEliminarCliente extends JFrame {
     }
 }
 
-// Ventana para Eliminar Envio
 class VentanaEliminarEnvio extends JFrame {
     private JComboBox<Integer> comboEnvios;
     private JButton btnEliminar, btnVolver;
@@ -533,11 +567,16 @@ class VentanaEliminarEnvio extends JFrame {
         setLayout(new FlowLayout());
         setLocationRelativeTo(null);
 
+        // Crear el panel de fondo
+        String imagePath = "C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg";
+        FondoPanel fondoPanel = new FondoPanel(imagePath);
+        fondoPanel.setLayout(new FlowLayout());  // Aseguramos que el contenido se acomode correctamente
+
         // Combo box con lista de envíos
         comboEnvios = new JComboBox<>();
         cargarEnvios();
-        add(new JLabel("Seleccione envío a eliminar:"));
-        add(comboEnvios);
+        fondoPanel.add(new JLabel("Seleccione envío a eliminar:"));
+        fondoPanel.add(comboEnvios);
 
         // Botón Eliminar
         btnEliminar = new JButton("Eliminar");
@@ -556,12 +595,16 @@ class VentanaEliminarEnvio extends JFrame {
                 }
             }
         });
-        add(btnEliminar);
+        fondoPanel.add(btnEliminar);
 
         // Botón Volver
         btnVolver = new JButton("Volver");
         btnVolver.addActionListener(e -> dispose());
-        add(btnVolver);
+        fondoPanel.add(btnVolver);
+
+        // Establecer el panel de fondo como ContentPane
+        setContentPane(fondoPanel);
+        setVisible(true);
     }
 
     // Método para cargar números de envíos en el combo box
@@ -573,6 +616,7 @@ class VentanaEliminarEnvio extends JFrame {
         }
     }
 }
+
 
 
 class VentanaMostrar extends JFrame {
@@ -595,6 +639,11 @@ class VentanaMostrar extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
     
+        // Crear el panel de fondo
+        String imagePath = "C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg"; // Ruta a tu imagen de fondo
+        FondoPanel fondoPanel = new FondoPanel(imagePath);
+        fondoPanel.setLayout(new BorderLayout()); // Usamos BorderLayout para organizar los componentes
+
         // Panel para botones con posiciones absolutas
         JPanel panelBotones = new JPanel();
         panelBotones.setLayout(null); // Usar un diseño nulo para posiciones absolutas
@@ -626,8 +675,12 @@ class VentanaMostrar extends JFrame {
         tablaDatos = new JTable(modeloTabla);
         JScrollPane scrollPane = new JScrollPane(tablaDatos);
     
-        add(panelBotones, BorderLayout.WEST); // Coloca el panel de botones en el lado izquierdo
-        add(scrollPane, BorderLayout.CENTER);
+        // Agregar el panel de botones y la tabla al panel de fondo
+        fondoPanel.add(panelBotones, BorderLayout.WEST); // Coloca el panel de botones en el lado izquierdo
+        fondoPanel.add(scrollPane, BorderLayout.CENTER); // Agrega la tabla en el centro
+    
+        // Establecer el panel de fondo como ContentPane
+        setContentPane(fondoPanel);
     
         // Acción para cada botón
         btnMostrarClientes.addActionListener(e -> mostrarClientes());
@@ -715,7 +768,7 @@ class VentanaLogin extends JFrame {
                 super.paintComponent(g);
                 // Dibuja la imagen de fondo
                 ImageIcon icon = new ImageIcon(
-                        "C:\\Users\\david\\OneDrive\\Documentos\\VSC proyects\\ProyectoBD\\.vscode\\image\\verdes.jpeg");
+                        "C:/Users/david/OneDrive/Documentos/VSC proyects/ProyectoBD/.vscode/image/fondo.jpg");
                 g.drawImage(icon.getImage(), 0, 0, getWidth(), getHeight(), this);
             }
         };
@@ -769,23 +822,28 @@ class VentanaLogin extends JFrame {
     }
 }
 
-    // Clase de FondoPanel para la imagen de fondo
-    class FondoPanel extends JPanel {
-        private Image imagen;
+// Clase FondoPanel para la imagen de fondo
+class FondoPanel extends JPanel {
+    private Image imagen;
 
-        public FondoPanel(String imagePath) {
-            try {
-                imagen = new ImageIcon(imagePath).getImage();
-            } catch (Exception e) {
-                System.out.println("No se pudo cargar la imagen: " + e.getMessage());
-            }
-        }
+    public FondoPanel(String imagePath) {
+        setImagePath(imagePath);
+    }
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (imagen != null) {
-                g.drawImage(imagen, 0, 0, getWidth(), getHeight(), this);
-            }
+    public void setImagePath(String imagePath) {
+        try {
+            imagen = new ImageIcon(imagePath).getImage();
+            repaint(); // Redibuja el panel para aplicar la nueva imagen
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar la imagen: " + e.getMessage());
         }
     }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (imagen != null) {
+            g.drawImage(imagen, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+}
