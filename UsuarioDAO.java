@@ -27,7 +27,7 @@ public class UsuarioDAO {
     }
 
     public boolean actualizarUsuario(String Cedula, String Nombre1, String Nombre2, String Apellido1, String Apellido2) {
-        String sql = "{ CALL Actualizarclientes(?, ?, ?, ?, ?) }";
+        String sql = "{ CALL Actualizarcliente(?, ?, ?, ?, ?) }";
         try (CallableStatement stmt = conexion.prepareCall(sql)) {
             stmt.setString(1, Cedula);
             stmt.setString(2, Nombre1);
