@@ -352,8 +352,8 @@ class VentanaActualizar extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER; // Centrar botones
 
         // Crear los botones con tamaño reducido
-        JButton btnActualizarCliente = new JButton("Actualizar Cliente");
-        JButton btnActualizarEnvio = new JButton("Actualizar Envío");
+        JButton btnActualizarCliente = new JButton("Cliente");
+        JButton btnActualizarEnvio = new JButton("Envío");
         JButton btnVolver = new JButton("Volver");
 
         // Ajustar tamaño de los botones
